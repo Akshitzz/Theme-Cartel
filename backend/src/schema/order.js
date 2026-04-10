@@ -48,7 +48,7 @@ const orderSchema = new mongoose.Schema({
   },
   
   orderItems: [orderItemSchema],
-  shippingAddress: orderAddressSchema,
+  shippingAddress: { type: orderAddressSchema, required: false },
   billingAddress: orderAddressSchema,
 
   // Payment Tracking
@@ -129,4 +129,4 @@ orderSchema.pre('save', function(next) {
 
 const Order = mongoose.model('Order', orderSchema);
 
-module.exports = Order;
+export default Order;

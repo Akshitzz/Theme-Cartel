@@ -1,4 +1,4 @@
-import mongoose from "mongoose";const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 
 const addressSchema = new mongoose.Schema({
@@ -60,20 +60,6 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  totalSpent: {
-    type: Number,
-    default: 0.00
-  },
-  ordersCount: {
-    type: Number,
-    default: 0
-  },
-  
-  
-  orders: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Order'
-  }],
 
   // Role-based access control (Admin vs regular customer)
   role: {
@@ -87,7 +73,7 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
-  passwordResetToken: String,
+  passwordResetToken: { type: String, index: true },
   passwordResetExpires: Date
 
 }, {
@@ -100,7 +86,7 @@ userSchema.virtual('fullName').get(function() {
 });
 
 // Pre-save hook to ensure only one default address exists
-userSchema.pre('save', function(next) {
+userSchema.pre('save', async function() {
   if (this.isModified('addresses')) {
     const defaultAddresses = this.addresses.filter(addr => addr.isDefault);
     if (defaultAddresses.length > 1) {
@@ -112,7 +98,6 @@ userSchema.pre('save', function(next) {
       this.addresses[0].isDefault = true;
     }
   }
-  next();
 });
 
 
@@ -126,4 +111,4 @@ userSchema.methods.toJSON = function() {
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+export default User;
